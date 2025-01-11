@@ -20,22 +20,31 @@ export default async function ArchiveNewsFilter({ params }) {
     links = getAvailableNewsMonths(selectedYear);
   }
 
-  let newsContent = <p>No News for the selected period.</p>
+  let newsContent = <p>No News for the selected period.</p>;
 
   if (selectedMonth && selectedYear) {
     news = getNewsForYearAndMonth(selectedYear, selectedMonth);
-    links= [];
+    links = [];
   }
 
   if (news && news.length > 0) {
     newsContent = <NewsList news={news} />;
   }
 
+  if (
+    (selectedYear && !getAvailableNewsYears().includes(+selectedYear)) ||
+    (selectedMonth &&
+      !getAvailableNewsMonths(selectedYear).includes(+selectedMonth))
+  ) {
+    throw new Error("Invalid Filter");
+  }
   return (
     <div className="w-full py-4 relative">
       <ul className="flex place-items-center gap-10 pb-4">
         {links.map((link) => {
-          const href = selectedYear ? `/archive/${selectedYear}/${link}` : `/archive/${link}`
+          const href = selectedYear
+            ? `/archive/${selectedYear}/${link}`
+            : `/archive/${link}`;
           return (
             <li key={link} className="font-semibold opacity-80">
               <Link href={href}>{link}</Link>
