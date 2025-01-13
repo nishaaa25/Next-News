@@ -1,10 +1,10 @@
-import { getAllNews } from "@/lib/news";
+import { getNewsItem } from "@/lib/news";
 import Image from "next/image";
 
 export default async function InterceptedNewsSlugImage({ params }) {
   const { newsSlug } = await params;
-  const newsList = getAllNews();
-  const news = newsList.find((newsItem) => newsItem.slug === newsSlug);
+  const news = await getNewsItem(newsSlug);
+
 
   if(!news){
     notFound();

@@ -9,21 +9,21 @@ import Link from "next/link";
 
 export default async function ArchiveNewsFilter({ params }) {
   const { filter } = await params;
-  let links = getAvailableNewsYears();
+  let links = await getAvailableNewsYears();
   let news;
 
   const selectedYear = filter?.[0];
   const selectedMonth = filter?.[1];
 
   if (selectedYear && !selectedMonth) {
-    news = getNewsForYear(selectedYear);
+    news = await getNewsForYear(selectedYear);
     links = getAvailableNewsMonths(selectedYear);
   }
 
   let newsContent = <p>No News for the selected period.</p>;
 
   if (selectedMonth && selectedYear) {
-    news = getNewsForYearAndMonth(selectedYear, selectedMonth);
+    news = await getNewsForYearAndMonth(selectedYear, selectedMonth);
     links = [];
   }
 
@@ -31,10 +31,12 @@ export default async function ArchiveNewsFilter({ params }) {
     newsContent = <NewsList news={news} />;
   }
 
+  const availableYears = await getAvailableNewsYears();
+
   if (
-    (selectedYear && !getAvailableNewsYears().includes(+selectedYear)) ||
+    (selectedYear && !availableYears.includes(selectedYear)) ||
     (selectedMonth &&
-      !getAvailableNewsMonths(selectedYear).includes(+selectedMonth))
+      !getAvailableNewsMonths(selectedYear).includes(selectedMonth))
   ) {
     throw new Error("Invalid Filter");
   }
